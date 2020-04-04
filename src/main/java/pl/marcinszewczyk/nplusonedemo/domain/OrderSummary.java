@@ -15,7 +15,7 @@ public class OrderSummary {
 
     String name;
 
-    @OneToMany()
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "SUMMARY_ID")
     List<Item> items = new ArrayList<>();
 

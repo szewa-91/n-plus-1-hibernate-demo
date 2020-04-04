@@ -10,7 +10,8 @@ import pl.marcinszewczyk.nplusonedemo.domain.Item;
 import pl.marcinszewczyk.nplusonedemo.domain.OrderSummary;
 import pl.marcinszewczyk.nplusonedemo.domain.OrderSummaryRepository;
 
-import javax.persistence.*;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,19 +32,14 @@ class OrdersDbTest {
     void shouldExtractItemsFromOrders() {
         List<OrderSummary> summaries = orderSummaryRepository.findByUserId(1L);
 
-        // items are not loaded by Hibernate yet
-        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(false);
-        assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(false);
+        // items are loaded right away, however using multiple queries
+        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
 
-        //with OrderSummary::getItems we force Hibernate to load the underlying items into memory
         List<Item> items = summaries.stream()
                 .map(OrderSummary::getItems)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        //now all items should be loaded
-        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
-        assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(true);
         assertThat(items).hasSize(8);
     }
 }
