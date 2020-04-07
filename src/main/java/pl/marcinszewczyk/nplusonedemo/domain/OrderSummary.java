@@ -1,5 +1,9 @@
 package pl.marcinszewczyk.nplusonedemo.domain;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,8 @@ public class OrderSummary {
     String name;
 
     @OneToMany()
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 2)
     @JoinColumn(name = "SUMMARY_ID")
     List<Item> items = new ArrayList<>();
 

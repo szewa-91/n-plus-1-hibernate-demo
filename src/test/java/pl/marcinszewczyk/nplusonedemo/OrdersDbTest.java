@@ -34,6 +34,30 @@ class OrdersDbTest {
         // items are not loaded by Hibernate yet
         assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(false);
         assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(false);
+        assertThat(persistenceUtil.isLoaded(summaries.get(2).getItems())).isEqualTo(false);
+        assertThat(persistenceUtil.isLoaded(summaries.get(3).getItems())).isEqualTo(false);
+        assertThat(persistenceUtil.isLoaded(summaries.get(4).getItems())).isEqualTo(false);
+
+        // referencing to items from the first order summary
+        System.out.println(summaries.get(0).getItems());
+
+        // only items from two first summaries are loaded (by one query)
+        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(2).getItems())).isEqualTo(false);
+        assertThat(persistenceUtil.isLoaded(summaries.get(3).getItems())).isEqualTo(false);
+        assertThat(persistenceUtil.isLoaded(summaries.get(4).getItems())).isEqualTo(false);
+
+        // referencing items from the third summary
+        System.out.println(summaries.get(2).getItems());
+
+        // only items from two first summaries are loaded (by one query)
+        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(2).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(3).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(4).getItems())).isEqualTo(false);
+
 
         //with OrderSummary::getItems we force Hibernate to load the underlying items into memory
         List<Item> items = summaries.stream()
@@ -44,6 +68,9 @@ class OrdersDbTest {
         //now all items should be loaded
         assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
         assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(2).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(3).getItems())).isEqualTo(true);
+        assertThat(persistenceUtil.isLoaded(summaries.get(4).getItems())).isEqualTo(true);
         assertThat(items).hasSize(8);
     }
 }
