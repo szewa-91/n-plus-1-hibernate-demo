@@ -31,19 +31,14 @@ class OrdersDbTest {
     void shouldExtractItemsFromOrders() {
         List<OrderSummary> summaries = orderSummaryRepository.findByUserId(1L);
 
-        // items are not loaded by Hibernate yet
-        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(false);
-        assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(false);
+        // items are loaded by Hibernate right away
+        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
 
-        //with OrderSummary::getItems we force Hibernate to load the underlying items into memory
         List<Item> items = summaries.stream()
                 .map(OrderSummary::getItems)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        //now all items should be loaded
-        assertThat(persistenceUtil.isLoaded(summaries.get(0).getItems())).isEqualTo(true);
-        assertThat(persistenceUtil.isLoaded(summaries.get(1).getItems())).isEqualTo(true);
         assertThat(items).hasSize(8);
     }
 }
